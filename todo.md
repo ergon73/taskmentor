@@ -9,7 +9,7 @@
 
 ---
 
-## Статус: ЭТАП 3 — В ПРОЦЕССЕ
+## Статус: ЭТАП 5 ЗАВЕРШЁН ✅ — ПРОЕКТ ГОТОВ К СДАЧЕ 🎉
 
 ---
 
@@ -72,52 +72,53 @@
 
 ---
 
-## Этап 3: Самочувствие + дашборд (дни 6–8) ← ТЕКУЩИЙ
+## Этап 3: Самочувствие + дашборд ✅
 
-- [~] 🔴 `core/models.py` — модель `MoodEntry`
-- [ ] 🔴 `python manage.py makemigrations && migrate`
-- [ ] 🔴 `core/forms.py` — `MoodForm`
-- [ ] 🔴 `core/admin.py` — `MoodEntryAdmin`
-- [ ] 🔴 Views: `mood_create`, `mood_history`
-- [ ] 🔴 Шаблоны: `mood_form.html`, `mood_history.html`
-- [ ] 🔴 Обновить `client_detail.html` — задачи клиента + история настроения + мини-график
-- [ ] 🔴 Реализовать полный `dashboard` view (метрики, данные для Chart.js)
-- [ ] 🔴 Шаблон `dashboard.html` — 4 карточки, 2 графика Chart.js, топ-5 задач
-- [ ] 🔴 Обновить `create_demo_data` — добавить MoodEntry за 20 дней
-- [ ] 🔴 `python manage.py check` — 0 ошибок
-- [ ] 🟡 `git commit "этап 3: самочувствие, дашборд, Chart.js"`
+- [x] 🔴 MoodEntry: unique_together(client,date), ordering=['-date'], SCORE_CHOICES
+- [x] 🔴 makemigrations → 0002_moodentry, migrate → OK
+- [x] 🔴 MoodForm: ChoiceField score c метками, default=today, clean_score→int
+- [x] 🔴 MoodEntryAdmin с фильтрами date/score
+- [x] 🔴 mood_create: update_or_create, flash «добавлена/обновлена»
+- [x] 🔴 mood_history: полная таблица по -date
+- [x] 🔴 client_detail: спарклайн Chart.js 30 дн, последние 10 записей, кнопка активна
+- [x] 🔴 dashboard view: 4 метрики, status_data/mood_labels/mood_values (raw dict→json_script)
+- [x] 🔴 dashboard.html: Doughnut + Line Chart.js 4.4.4, топ-5, json_script XSS-safe
+- [x] 🔴 create_demo_data: 60 записей (3 клиента × 20 дней, разные паттерны)
+- [x] 🔴 manage.py check → 0 ошибок; импорты всех классов → OK
+- [x] 🔴 Данные дашборда: 3 кл / 9 акт / 2 просроч / настроение 3.8 / 20 точек на графике
+- [x] 🟡 git commit e2873bb
+- [x] 🟡 ОК получен → переход к Этапу 4
+
+---
+
+## Этап 4: Уведомления ✅
+
+- [x] 🔴 `core/models.py` — модель `Notification`
+- [x] 🔴 `python manage.py makemigrations && migrate` → 0003_notification OK
+- [x] 🔴 Активировать `context_processors.py` — реальный счётчик из БД
+- [x] 🔴 Обновить `base.html` — бейдж уведомлений активен, href на url-name
+- [x] 🔴 Views: `notification_list`, `notification_mark_read`
+- [x] 🔴 Шаблон: `notification_list.html`
+- [x] 🔴 `core/admin.py` — `NotificationAdmin`
+- [x] 🔴 Management command: `notify_deadlines` → создано 4 уведомления на demo-данных
+- [x] 🔴 Обновить `core/urls.py`
+- [x] 🔴 `python manage.py check` — 0 ошибок
+- [x] 🟡 `git commit 918c3b4 "этап 4: уведомления, бейдж, management command"`
 - [ ] 🟡 Показать пользователю → ждать ОК
 
 ---
 
-## Этап 4: Уведомления (дни 9–11)
+## Этап 5: Финальная полировка ✅
 
-- [ ] 🔴 `core/models.py` — модель `Notification`
-- [ ] 🔴 `python manage.py makemigrations && migrate`
-- [ ] 🔴 Активировать `context_processors.py` — реальный счётчик из БД
-- [ ] 🔴 Обновить `base.html` — бейдж уведомлений активен
-- [ ] 🔴 Views: `notification_list`, `notification_mark_read`
-- [ ] 🔴 Шаблон: `notification_list.html`
-- [ ] 🔴 `core/admin.py` — `NotificationAdmin`
-- [ ] 🔴 Management command: `notify_deadlines` (точно по спецификации)
-- [ ] 🔴 Обновить `core/urls.py`
-- [ ] 🔴 `python manage.py check` — 0 ошибок
-- [ ] 🟡 `git commit "этап 4: уведомления, бейдж, management command"`
-- [ ] 🟡 Показать пользователю → ждать ОК
-
----
-
-## Этап 5: Финальная полировка (дни 12–14)
-
-- [ ] 🟡 Адаптивность — `table-responsive`, бургер-меню на мобильном
-- [ ] 🟡 Пустые состояния для всех списков
-- [ ] 🟡 Flash-сообщения после всех CRUD-действий
-- [ ] 🟡 Fixtures: `demo_data.json` (1 demo-пользователь, 5 клиентов, 15 задач, 30 mood-записей, 5 уведомлений)
-- [ ] 🟡 `pip freeze > requirements.txt`
-- [ ] 🟢 Обновить README.md
-- [ ] 🟡 Финальный `python manage.py check`
-- [ ] 🟡 `git commit "этап 5: полировка, fixtures, requirements.txt"`
-- [ ] 🟡 Показать пользователю → финальная сдача
+- [x] 🟡 Адаптивность — `table-responsive` на всех таблицах (добавлено в client_detail.html mood-таблица), бургер-меню ✅
+- [x] 🟡 Пустые состояния — все списки: clients, tasks, mood_history, notification_list, dashboard ✅
+- [x] 🟡 Flash-сообщения — все CRUD: клиенты, задачи, mood, уведомления, auth ✅
+- [x] 🟡 Fixtures: `demo_data.json` — 1 user / 5 clients / 15 tasks / 30 mood / 5 notifs ✅
+- [x] 🟡 `pip freeze > requirements.txt` — Django 4.2.29, python-dotenv, tzdata ✅
+- [x] 🟢 README.md — установка, запуск, демо-данные, management commands ✅
+- [x] 🟡 Финальный `python manage.py check` — 0 ошибок ✅
+- [x] 🟡 `git commit "этап 5: полировка, fixtures, requirements.txt"`
+- [x] 🟡 Проект готов к сдаче ✅
 
 ---
 

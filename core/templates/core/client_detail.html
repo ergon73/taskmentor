@@ -166,6 +166,7 @@
 </div>
 
 {% if mood_entries %}
+<div class="table-responsive">
 <table class="table">
     <thead>
         <tr><th>Дата</th><th>Оценка</th><th>Комментарий</th></tr>
@@ -180,6 +181,7 @@
         {% endfor %}
     </tbody>
 </table>
+</div>
 {% else %}
 <p class="text-muted">
     Записей самочувствия пока нет.

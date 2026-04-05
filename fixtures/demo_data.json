@@ -1,0 +1,630 @@
+[
+{
+  "model": "auth.user",
+  "pk": 2,
+  "fields": {
+    "password": "pbkdf2_sha256$600000$Riqz5AtAnfZr35NWrDxpGY$ainaSTWXIjytcpMGxI2BS519dQmgGDqQebavte8oy0Q=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "demo",
+    "first_name": "Demo",
+    "last_name": "User",
+    "email": "demo@taskmentor.ru",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-04-05T21:46:22.142Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "core.client",
+  "pk": 11,
+  "fields": {
+    "name": "Анна Смирнова",
+    "email": "anna@example.com",
+    "phone": "+7 900 111-22-33",
+    "notes": "Цель: снижение тревожности. Работает менеджером среднего звена.",
+    "owner": 2,
+    "created_at": "2026-04-05T21:46:22.304Z"
+  }
+},
+{
+  "model": "core.client",
+  "pk": 12,
+  "fields": {
+    "name": "Михаил Кузнецов",
+    "email": "mikhail@example.com",
+    "phone": "+7 900 444-55-66",
+    "notes": "Карьерный коучинг. Хочет сменить сферу деятельности.",
+    "owner": 2,
+    "created_at": "2026-04-05T21:46:22.309Z"
+  }
+},
+{
+  "model": "core.client",
+  "pk": 13,
+  "fields": {
+    "name": "Елена Петрова",
+    "email": "elena@example.com",
+    "phone": "",
+    "notes": "Работа над самооценкой. Начало сессий: январь 2026.",
+    "owner": 2,
+    "created_at": "2026-04-05T21:46:22.315Z"
+  }
+},
+{
+  "model": "core.client",
+  "pk": 14,
+  "fields": {
+    "name": "Алексей Воронов",
+    "email": "aleksey@example.com",
+    "phone": "+7 900 777-88-99",
+    "notes": "Тайм-менеджмент и продуктивность.",
+    "owner": 2,
+    "created_at": "2026-04-05T21:46:22.320Z"
+  }
+},
+{
+  "model": "core.client",
+  "pk": 15,
+  "fields": {
+    "name": "Ольга Титова",
+    "email": "olga@example.com",
+    "phone": "+7 900 000-11-22",
+    "notes": "Семейный коучинг. Баланс работы и личной жизни.",
+    "owner": 2,
+    "created_at": "2026-04-05T21:46:22.327Z"
+  }
+},
+{
+  "model": "core.task",
+  "pk": 32,
+  "fields": {
+    "title": "Подготовить план первых сессий",
+    "description": "",
+    "client": 11,
+    "due_date": "2026-03-25",
+    "priority": "high",
+    "status": "done",
+    "created_at": "2026-04-05T21:46:22.332Z"
+  }
+},
+{
+  "model": "core.task",
+  "pk": 33,
+  "fields": {
+    "title": "Отправить домашнее задание по дыхательным практикам",
+    "description": "",
+    "client": 11,
+    "due_date": "2026-04-04",
+    "priority": "medium",
+    "status": "in_progress",
+    "created_at": "2026-04-05T21:46:22.337Z"
+  }
+},
+{
+  "model": "core.task",
+  "pk": 34,
+  "fields": {
+    "title": "Согласовать расписание на май",
+    "description": "",
+    "client": 11,
+    "due_date": "2026-04-21",
+    "priority": "low",
+    "status": "new",
+    "created_at": "2026-04-05T21:46:22.343Z"
+  }
+},
+{
+  "model": "core.task",
+  "pk": 35,
+  "fields": {
+    "title": "Провести анализ сильных сторон (колесо баланса)",
+    "description": "",
+    "client": 12,
+    "due_date": "2026-04-01",
+    "priority": "high",
+    "status": "done",
+    "created_at": "2026-04-05T21:46:22.348Z"
+  }
+},
+{
+  "model": "core.task",
+  "pk": 36,
+  "fields": {
+    "title": "Составить список целевых компаний",
+    "description": "",
+    "client": 12,
+    "due_date": "2026-04-07",
+    "priority": "high",
+    "status": "in_progress",
+    "created_at": "2026-04-05T21:46:22.354Z"
+  }
+},
+{
+  "model": "core.task",
+  "pk": 37,
+  "fields": {
+    "title": "Подготовить резюме для новой сферы",
+    "description": "",
+    "client": 12,
+    "due_date": "2026-04-13",
+    "priority": "medium",
+    "status": "new",
+    "created_at": "2026-04-05T21:46:22.359Z"
+  }
+},
+{
+  "model": "core.task",
+  "pk": 38,
+  "fields": {
+    "title": "Провести вводную диагностику самооценки",
+    "description": "",
+    "client": 13,
+    "due_date": "2026-03-29",
+    "priority": "medium",
+    "status": "done",
+    "created_at": "2026-04-05T21:46:22.364Z"
+  }
+},
+{
+  "model": "core.task",
+  "pk": 39,
+  "fields": {
+    "title": "Проработать аффирмации на неделю",
+    "description": "",
+    "client": 13,
+    "due_date": "2026-04-06",
+    "priority": "medium",
+    "status": "in_progress",
+    "created_at": "2026-04-05T21:46:22.370Z"
+  }
+},
+{
+  "model": "core.task",
+  "pk": 40,
+  "fields": {
+    "title": "Заполнить дневник успехов за март",
+    "description": "",
+    "client": 13,
+    "due_date": "2026-04-09",
+    "priority": "low",
+    "status": "new",
+    "created_at": "2026-04-05T21:46:22.375Z"
+  }
+},
+{
+  "model": "core.task",
+  "pk": 41,
+  "fields": {
+    "title": "Разбор матрицы Эйзенхауэра",
+    "description": "",
+    "client": 14,
+    "due_date": "2026-04-05",
+    "priority": "high",
+    "status": "in_progress",
+    "created_at": "2026-04-05T21:46:22.381Z"
+  }
+},
+{
+  "model": "core.task",
+  "pk": 42,
+  "fields": {
+    "title": "Настроить Pomodoro-систему",
+    "description": "",
+    "client": 14,
+    "due_date": "2026-04-08",
+    "priority": "medium",
+    "status": "new",
+    "created_at": "2026-04-05T21:46:22.387Z"
+  }
+},
+{
+  "model": "core.task",
+  "pk": 43,
+  "fields": {
+    "title": "Обсудить итоги эксперимента с расписанием",
+    "description": "",
+    "client": 14,
+    "due_date": "2026-04-16",
+    "priority": "low",
+    "status": "new",
+    "created_at": "2026-04-05T21:46:22.393Z"
+  }
+},
+{
+  "model": "core.task",
+  "pk": 44,
+  "fields": {
+    "title": "Провести семейную сессию (диагностика)",
+    "description": "",
+    "client": 15,
+    "due_date": "2026-04-03",
+    "priority": "high",
+    "status": "done",
+    "created_at": "2026-04-05T21:46:22.398Z"
+  }
+},
+{
+  "model": "core.task",
+  "pk": 45,
+  "fields": {
+    "title": "Выдать материалы по активному слушанию",
+    "description": "",
+    "client": 15,
+    "due_date": "2026-04-07",
+    "priority": "high",
+    "status": "in_progress",
+    "created_at": "2026-04-05T21:46:22.403Z"
+  }
+},
+{
+  "model": "core.task",
+  "pk": 46,
+  "fields": {
+    "title": "Запланировать совместный разбор ролей",
+    "description": "",
+    "client": 15,
+    "due_date": "2026-04-20",
+    "priority": "medium",
+    "status": "new",
+    "created_at": "2026-04-05T21:46:22.408Z"
+  }
+},
+{
+  "model": "core.moodentry",
+  "pk": 122,
+  "fields": {
+    "client": 11,
+    "date": "2026-04-01",
+    "score": 3,
+    "comment": "Чувствую усталость"
+  }
+},
+{
+  "model": "core.moodentry",
+  "pk": 123,
+  "fields": {
+    "client": 11,
+    "date": "2026-04-02",
+    "score": 4,
+    "comment": ""
+  }
+},
+{
+  "model": "core.moodentry",
+  "pk": 124,
+  "fields": {
+    "client": 11,
+    "date": "2026-04-03",
+    "score": 3,
+    "comment": "Хороший день"
+  }
+},
+{
+  "model": "core.moodentry",
+  "pk": 125,
+  "fields": {
+    "client": 11,
+    "date": "2026-04-04",
+    "score": 5,
+    "comment": "Отличное настроение!"
+  }
+},
+{
+  "model": "core.moodentry",
+  "pk": 126,
+  "fields": {
+    "client": 11,
+    "date": "2026-04-05",
+    "score": 4,
+    "comment": ""
+  }
+},
+{
+  "model": "core.moodentry",
+  "pk": 127,
+  "fields": {
+    "client": 11,
+    "date": "2026-04-06",
+    "score": 4,
+    "comment": "Спокойно"
+  }
+},
+{
+  "model": "core.moodentry",
+  "pk": 128,
+  "fields": {
+    "client": 12,
+    "date": "2026-04-01",
+    "score": 2,
+    "comment": "Тревога с утра"
+  }
+},
+{
+  "model": "core.moodentry",
+  "pk": 129,
+  "fields": {
+    "client": 12,
+    "date": "2026-04-02",
+    "score": 3,
+    "comment": "Немного лучше"
+  }
+},
+{
+  "model": "core.moodentry",
+  "pk": 130,
+  "fields": {
+    "client": 12,
+    "date": "2026-04-03",
+    "score": 2,
+    "comment": ""
+  }
+},
+{
+  "model": "core.moodentry",
+  "pk": 131,
+  "fields": {
+    "client": 12,
+    "date": "2026-04-04",
+    "score": 4,
+    "comment": "Продуктивный день"
+  }
+},
+{
+  "model": "core.moodentry",
+  "pk": 132,
+  "fields": {
+    "client": 12,
+    "date": "2026-04-05",
+    "score": 3,
+    "comment": ""
+  }
+},
+{
+  "model": "core.moodentry",
+  "pk": 133,
+  "fields": {
+    "client": 12,
+    "date": "2026-04-06",
+    "score": 4,
+    "comment": "Есть прогресс"
+  }
+},
+{
+  "model": "core.moodentry",
+  "pk": 134,
+  "fields": {
+    "client": 13,
+    "date": "2026-04-01",
+    "score": 4,
+    "comment": "Всё хорошо"
+  }
+},
+{
+  "model": "core.moodentry",
+  "pk": 135,
+  "fields": {
+    "client": 13,
+    "date": "2026-04-02",
+    "score": 4,
+    "comment": "Отличный день"
+  }
+},
+{
+  "model": "core.moodentry",
+  "pk": 136,
+  "fields": {
+    "client": 13,
+    "date": "2026-04-03",
+    "score": 5,
+    "comment": "На подъёме"
+  }
+},
+{
+  "model": "core.moodentry",
+  "pk": 137,
+  "fields": {
+    "client": 13,
+    "date": "2026-04-04",
+    "score": 4,
+    "comment": ""
+  }
+},
+{
+  "model": "core.moodentry",
+  "pk": 138,
+  "fields": {
+    "client": 13,
+    "date": "2026-04-05",
+    "score": 5,
+    "comment": "Очень доволен/а"
+  }
+},
+{
+  "model": "core.moodentry",
+  "pk": 139,
+  "fields": {
+    "client": 13,
+    "date": "2026-04-06",
+    "score": 5,
+    "comment": ""
+  }
+},
+{
+  "model": "core.moodentry",
+  "pk": 140,
+  "fields": {
+    "client": 14,
+    "date": "2026-04-01",
+    "score": 2,
+    "comment": "Устал/а"
+  }
+},
+{
+  "model": "core.moodentry",
+  "pk": 141,
+  "fields": {
+    "client": 14,
+    "date": "2026-04-02",
+    "score": 2,
+    "comment": "Трудно сосредоточиться"
+  }
+},
+{
+  "model": "core.moodentry",
+  "pk": 142,
+  "fields": {
+    "client": 14,
+    "date": "2026-04-03",
+    "score": 3,
+    "comment": "Немного лучше"
+  }
+},
+{
+  "model": "core.moodentry",
+  "pk": 143,
+  "fields": {
+    "client": 14,
+    "date": "2026-04-04",
+    "score": 2,
+    "comment": ""
+  }
+},
+{
+  "model": "core.moodentry",
+  "pk": 144,
+  "fields": {
+    "client": 14,
+    "date": "2026-04-05",
+    "score": 3,
+    "comment": "Поработал/а над расписанием"
+  }
+},
+{
+  "model": "core.moodentry",
+  "pk": 145,
+  "fields": {
+    "client": 14,
+    "date": "2026-04-06",
+    "score": 3,
+    "comment": ""
+  }
+},
+{
+  "model": "core.moodentry",
+  "pk": 146,
+  "fields": {
+    "client": 15,
+    "date": "2026-04-01",
+    "score": 3,
+    "comment": "Нормально"
+  }
+},
+{
+  "model": "core.moodentry",
+  "pk": 147,
+  "fields": {
+    "client": 15,
+    "date": "2026-04-02",
+    "score": 4,
+    "comment": "Хороший разговор с семьёй"
+  }
+},
+{
+  "model": "core.moodentry",
+  "pk": 148,
+  "fields": {
+    "client": 15,
+    "date": "2026-04-03",
+    "score": 4,
+    "comment": ""
+  }
+},
+{
+  "model": "core.moodentry",
+  "pk": 149,
+  "fields": {
+    "client": 15,
+    "date": "2026-04-04",
+    "score": 3,
+    "comment": "Небольшая тревога"
+  }
+},
+{
+  "model": "core.moodentry",
+  "pk": 150,
+  "fields": {
+    "client": 15,
+    "date": "2026-04-05",
+    "score": 4,
+    "comment": "Лучше"
+  }
+},
+{
+  "model": "core.moodentry",
+  "pk": 151,
+  "fields": {
+    "client": 15,
+    "date": "2026-04-06",
+    "score": 4,
+    "comment": ""
+  }
+},
+{
+  "model": "core.notification",
+  "pk": 17,
+  "fields": {
+    "user": 2,
+    "text": "⚠️ Просрочена задача «Отправить домашнее задание по дыхательным практикам» (клиент: Анна Смирнова, дедлайн: 04.04.2026)",
+    "task": 33,
+    "is_read": true,
+    "created_at": "2026-04-05T21:46:22.580Z"
+  }
+},
+{
+  "model": "core.notification",
+  "pk": 18,
+  "fields": {
+    "user": 2,
+    "text": "⚠️ Просрочена задача «Разбор матрицы Эйзенхауэра» (клиент: Алексей Воронов, дедлайн: 05.04.2026)",
+    "task": 41,
+    "is_read": true,
+    "created_at": "2026-04-05T21:46:22.586Z"
+  }
+},
+{
+  "model": "core.notification",
+  "pk": 19,
+  "fields": {
+    "user": 2,
+    "text": "⏰ Скоро дедлайн задачи «Согласовать расписание на май» (клиент: Анна Смирнова, дедлайн: 21.04.2026)",
+    "task": 34,
+    "is_read": false,
+    "created_at": "2026-04-05T21:46:22.592Z"
+  }
+},
+{
+  "model": "core.notification",
+  "pk": 20,
+  "fields": {
+    "user": 2,
+    "text": "⏰ Завтра дедлайн задачи «Составить список целевых компаний» (клиент: Михаил Кузнецов, дедлайн: 07.04.2026)",
+    "task": 36,
+    "is_read": false,
+    "created_at": "2026-04-05T21:46:22.598Z"
+  }
+},
+{
+  "model": "core.notification",
+  "pk": 21,
+  "fields": {
+    "user": 2,
+    "text": "⏰ Скоро дедлайн задачи «Подготовить резюме для новой сферы» (клиент: Михаил Кузнецов, дедлайн: 13.04.2026)",
+    "task": 37,
+    "is_read": false,
+    "created_at": "2026-04-05T21:46:22.605Z"
+  }
+}
+]
