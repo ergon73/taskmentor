@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block title %}Клиенты — TaskMentor{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h4 class="mb-0">&#x1F465; Клиенты</h4>
+    <a href="{% url 'core:client_create' %}" class="btn btn-warning">+ Новый клиент</a>
+</div>
+
+<!-- Поиск по имени и email -->
+<form method="get" class="mb-3">
+    <div class="input-group" style="max-width: 400px;">
+        <input type="text" name="q" class="form-control"
+               placeholder="Поиск по имени или email..."
+               value="{{ query }}">
+        <button type="submit" class="btn btn-outline-secondary">Найти</button>
+        {% if query %}
+        <a href="{% url 'core:client_list' %}" class="btn btn-outline-secondary" title="Очистить">&#x2715;</a>
+        {% endif %}
+    </div>
+</form>
+
+{% if clients %}
+<div class="table-responsive">
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>Имя</th>
+                <th>Email</th>
+                <th>Телефон</th>
+                <th>Активных задач</th>
+                <th>Действия</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for client in clients %}
+            <tr>
+                <td>
+                    <a href="{% url 'core:client_detail' client.id %}">{{ client.name }}</a>
+                </td>
+                <td>{{ client.email }}</td>
+                <td>{{ client.phone|default:"—" }}</td>
+                <td>{{ client.active_tasks_count }}</td>
+                <td>
+                    <a href="{% url 'core:client_detail' client.id %}"
+                       class="btn btn-sm btn-outline-secondary">Открыть</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+<!-- Пустое состояние -->
+<div class="text-center py-5">
+    {% if query %}
+    <p class="text-muted fs-5">По запросу «{{ query }}» ничего не найдено.</p>
+    <a href="{% url 'core:client_list' %}" class="btn btn-outline-secondary">Показать всех клиентов</a>
+    {% else %}
+    <p class="text-muted fs-5">У вас пока нет клиентов.</p>
+    <a href="{% url 'core:client_create' %}" class="btn btn-warning">+ Добавить первого клиента</a>
+    {% endif %}
+</div>
+{% endif %}
+{% endblock %}

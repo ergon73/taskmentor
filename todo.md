@@ -9,7 +9,7 @@
 
 ---
 
-## Статус: ЭТАП 1 — В ПРОЦЕССЕ (запись файлов)
+## Статус: ЭТАП 2 — В ПРОЦЕССЕ
 
 ---
 
@@ -26,33 +26,34 @@
 
 ---
 
-## Этап 1: Каркас + аутентификация (дни 1–2) ← ТЕКУЩИЙ
+## Этап 1: Каркас + аутентификация ✅
 
-- [~] 🔴 Настроить `config/settings.py` (INSTALLED_APPS, AUTH, локаль, static, MESSAGE_TAGS, .env)
-- [~] 🔴 Настроить `config/urls.py` — корневые маршруты
-- [~] 🔴 Создать `core/models.py` — заглушка
-- [~] 🔴 Создать `core/admin.py` — заглушка
-- [~] 🔴 Создать `core/context_processors.py` (счётчик = 0, активируется на Этапе 4)
-- [~] 🔴 Создать `core/forms.py` — RegisterForm
-- [~] 🔴 Создать `core/views.py` — index, register, user_login, user_logout, dashboard
-- [~] 🔴 Создать `core/urls.py` — маршруты Этапа 1
+- [x] 🔴 Настроить `config/settings.py` (INSTALLED_APPS, AUTH, локаль, static, MESSAGE_TAGS, .env)
+- [x] 🔴 Настроить `config/urls.py` — корневые маршруты
+- [x] 🔴 Создать `core/models.py` — заглушка
+- [x] 🔴 Создать `core/admin.py` — заглушка
+- [x] 🔴 Создать `core/context_processors.py` (счётчик = 0, активируется на Этапе 4)
+- [x] 🔴 Создать `core/forms.py` — RegisterForm
+- [x] 🔴 Создать `core/views.py` — index, register, user_login, user_logout, dashboard
+- [x] 🔴 Создать `core/urls.py` — маршруты Этапа 1
 - [x] 🔴 Создать `core/templates/base.html` — навбар, Bootstrap 5.3 CDN, flash-сообщения
 - [x] 🔴 Создать `core/templates/registration/login.html`
 - [x] 🔴 Создать `core/templates/registration/register.html`
 - [x] 🔴 Создать `core/templates/core/dashboard.html` — заглушка
 - [x] 🔴 Создать `core/static/core/css/style.css` — оранжевая тема
-- [x] 🔴 Создать `.gitignore`
+- [x] 🔴 Создать `.gitignore`, `.env`
 - [x] 🔴 Создать templatetags/__init__.py, core_extras.py, management/__init__ файлы
-- [ ] 🔴 Прогнать `python manage.py check` — 0 ошибок
-- [ ] 🔴 Прогнать `python manage.py migrate`
-- [ ] 🟡 `git init` + первый коммит
-- [ ] 🟡 Показать пользователю → ждать ОК
+- [x] 🔴 `python manage.py check` → 0 ошибок
+- [x] 🔴 `python manage.py migrate` → 18 миграций применено
+- [x] 🔴 Импорт views, forms, context_processors → OK
+- [x] 🟡 `git init` + первый коммит (fd1bd96)
+- [x] 🟡 Ожидание ОК от пользователя → ОК получен
 
 ---
 
-## Этап 2: Клиенты и задачи (дни 3–5)
+## Этап 2: Клиенты и задачи (дни 3–5) ← ТЕКУЩИЙ
 
-- [ ] 🔴 `core/models.py` — модели `Client`, `Task` (точно по спецификации)
+- [~] 🔴 `core/models.py` — модели `Client`, `Task` (точно по спецификации)
 - [ ] 🔴 `python manage.py makemigrations && migrate`
 - [ ] 🔴 `core/forms.py` — `ClientForm`, `TaskForm` (фильтрация клиентов по owner)
 - [ ] 🔴 `core/admin.py` — `ClientAdmin`, `TaskAdmin`

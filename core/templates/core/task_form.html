@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% block title %}{% if task %}Редактирование задачи{% else %}Новая задача{% endif %} — TaskMentor{% endblock %}
+
+{% block content %}
+<div class="mb-3">
+    <a href="{% url 'core:task_list' %}" class="text-muted text-decoration-none small">
+        &#x2190; Все задачи
+    </a>
+</div>
+
+<h4 class="mb-4">
+    {% if task %}Редактировать: {{ task.title }}{% else %}Новая задача{% endif %}
+</h4>
+
+<div class="card" style="max-width: 600px;">
+    <div class="card-body p-4">
+        <form method="post" novalidate>
+            {% csrf_token %}
+            {# В режиме создания status не показывается — устанавливается принудительно во view #}
+            {% if not task %}
+            <input type="hidden" name="status" value="new">
+            {% endif %}
+
+            <!-- Название -->
+            <div class="mb-3">
+                <label class="form-label fw-semibold">
+                    {{ form.title.label }} <span class="text-danger">*</span>
+                </label>
+                {{ form.title }}
+                {% if form.title.errors %}
+                <div class="text-danger small mt-1">
+                    {% for e in form.title.errors %}{{ e }}{% endfor %}
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Описание -->
+            <div class="mb-3">
+                <label class="form-label fw-semibold">{{ form.description.label }}</label>
+                {{ form.description }}
+            </div>
+
+            <!-- Клиент -->
+            <div class="mb-3">
+                <label class="form-label fw-semibold">
+                    {{ form.client.label }} <span class="text-danger">*</span>
+                </label>
+                {{ form.client }}
+                {% if form.client.errors %}
+                <div class="text-danger small mt-1">
+                    {% for e in form.client.errors %}{{ e }}{% endfor %}
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Дедлайн и Приоритет в одну строку -->
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label fw-semibold">
+                        {{ form.due_date.label }} <span class="text-danger">*</span>
+                    </label>
+                    {{ form.due_date }}
+                    {% if form.due_date.errors %}
+                    <div class="text-danger small mt-1">
+                        {% for e in form.due_date.errors %}{{ e }}{% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label fw-semibold">{{ form.priority.label }}</label>
+                    {{ form.priority }}
+                </div>
+            </div>
+
+            <!-- Статус — только при редактировании существующей задачи -->
+            {% if task %}
+            <div class="mb-3">
+                <label class="form-label fw-semibold">{{ form.status.label }}</label>
+                {{ form.status }}
+            </div>
+            {% endif %}
+
+            <div class="d-flex gap-2 mt-3 flex-wrap">
+                <button type="submit" class="btn btn-warning">
+                    {% if task %}Сохранить изменения{% else %}Создать задачу{% endif %}
+                </button>
+                <a href="{% url 'core:task_list' %}" class="btn btn-outline-secondary">Отмена</a>
+                {% if task %}
+                <a href="{% url 'core:task_delete' task.id %}"
+                   class="btn btn-outline-danger ms-auto">Удалить задачу</a>
+                {% endif %}
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -32,16 +32,14 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        {# Этап 2: заменить href на {% url 'core:client_list' %} #}
                         <a class="nav-link {% if '/clients/' in request.path %}active{% endif %}"
-                           href="/clients/">
+                           href="{% url 'core:client_list' %}">
                             &#x1F465; Клиенты
                         </a>
                     </li>
                     <li class="nav-item">
-                        {# Этап 2: заменить href на {% url 'core:task_list' %} #}
                         <a class="nav-link {% if '/tasks/' in request.path %}active{% endif %}"
-                           href="/tasks/">
+                           href="{% url 'core:task_list' %}">
                             &#x2705; Задачи
                         </a>
                     </li>
