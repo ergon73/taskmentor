@@ -9,7 +9,12 @@ def unread_notifications_count(request):
     """Добавляет количество непрочитанных уведомлений в контекст всех шаблонов.
 
     Используется для отображения бейджа в навигации (колокольчик).
-    Этап 1: всегда возвращает 0 — модель Notification создаётся на Этапе 4.
-    Этап 4: раскомментировать реальный запрос к БД.
+    Активировано на Этапе 4.
     """
+    if request.user.is_authenticated:
+        from .models import Notification
+        count = Notification.objects.filter(
+            user=request.user, is_read=False
+        ).count()
+        return {'unread_notifications_count': count}
     return {'unread_notifications_count': 0}

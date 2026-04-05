@@ -7,7 +7,7 @@
 """
 
 from django.contrib import admin
-from .models import Client, Task, MoodEntry
+from .models import Client, Task, MoodEntry, Notification
 
 
 @admin.register(Client)
@@ -35,3 +35,12 @@ class MoodEntryAdmin(admin.ModelAdmin):
     list_display = ('client', 'date', 'score', 'comment')
     list_filter = ('date', 'score')
     search_fields = ('client__name',)
+
+
+@admin.register(Notification)
+class NotificationAdmin(admin.ModelAdmin):
+    """Уведомления в Django Admin."""
+
+    list_display = ('text', 'user', 'task', 'is_read', 'created_at')
+    list_filter = ('is_read', 'created_at')
+    search_fields = ('text', 'user__username')

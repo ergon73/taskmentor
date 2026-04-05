@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block title %}Уведомления — TaskMentor{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h4 class="mb-0">&#x1F514; Уведомления</h4>
+    {% if notifications %}
+    <span class="text-muted small">
+        Непрочитанных: {{ unread_notifications_count }}
+    </span>
+    {% endif %}
+</div>
+
+{% if notifications %}
+<div class="list-group">
+    {% for notification in notifications %}
+    <div class="list-group-item {% if not notification.is_read %}list-group-item-warning{% endif %} d-flex justify-content-between align-items-start gap-3">
+        <div class="flex-grow-1">
+            <p class="mb-1 {% if notification.is_read %}text-muted{% endif %}">
+                {{ notification.text }}
+            </p>
+            <div class="d-flex gap-3 align-items-center">
+                <small class="text-muted">
+                    {{ notification.created_at|date:"d.m.Y H:i" }}
+                </small>
+                {% if notification.task %}
+                <small>
+                    <a href="{% url 'core:client_detail' notification.task.client.id %}"
+                       class="text-muted text-decoration-none">
+                        &#x1F4CB; {{ notification.task.client.name }}
+                    </a>
+                </small>
+                {% endif %}
+                {% if notification.is_read %}
+                <small class="text-muted">&#x2713; Прочитано</small>
+                {% endif %}
+            </div>
+        </div>
+        {% if not notification.is_read %}
+        <div class="flex-shrink-0">
+            <form method="post"
+                  action="{% url 'core:notification_mark_read' notification.id %}">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-sm btn-outline-secondary"
+                        title="Отметить как прочитанное">
+                    &#x2713; Прочитано
+                </button>
+            </form>
+        </div>
+        {% endif %}
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="text-center py-5">
+    <p class="text-muted fs-5 mb-3">&#x1F389; Уведомлений пока нет.</p>
+    <p class="text-muted small">
+        Уведомления появятся, когда подойдут дедлайны задач.<br>
+        Запустите команду <code>python manage.py notify_deadlines</code> для проверки.
+    </p>
+    <a href="{% url 'core:dashboard' %}" class="btn btn-warning mt-2">
+        На дашборд
+    </a>
+</div>
+{% endif %}
+{% endblock %}

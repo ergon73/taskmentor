@@ -124,3 +124,27 @@ class MoodEntry(models.Model):
 
     def __str__(self):
         return f'{self.client.name} — {self.date} — {self.score}/5'
+
+
+class Notification(models.Model):
+    """Уведомление для специалиста о дедлайне задачи."""
+
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name='notifications',
+        verbose_name='Получатель'
+    )
+    text = models.CharField('Текст', max_length=300)
+    task = models.ForeignKey(
+        Task, on_delete=models.CASCADE, null=True, blank=True,
+        related_name='notifications', verbose_name='Задача'
+    )
+    is_read = models.BooleanField('Прочитано', default=False)
+    created_at = models.DateTimeField('Дата создания', auto_now_add=True)
+
+    class Meta:
+        verbose_name = 'Уведомление'
+        verbose_name_plural = 'Уведомления'
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return self.text[:50]

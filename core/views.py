@@ -20,7 +20,7 @@ from django.db.models import Q, Avg
 from django.utils import timezone
 
 from .forms import RegisterForm, ClientForm, TaskForm, MoodForm
-from .models import Client, Task, MoodEntry
+from .models import Client, Task, MoodEntry, Notification
 
 
 # ===========================================================================
@@ -436,3 +436,41 @@ def mood_history(request, client_id):
         'client': client,
         'entries': entries,
     })
+
+
+# ===========================================================================
+# Уведомления
+# ===========================================================================
+
+@login_required
+def notification_list(request):
+    """Список уведомлений текущего пользователя.
+
+    Сортировка: непрочитанные сверху, внутри группы — свежие первыми.
+    False (0) < True (1), поэтому order_by('is_read') ставит непрочитанные первыми.
+    """
+    notifications = Notification.objects.filter(
+        user=request.user
+    ).order_by('is_read', '-created_at').select_related('task', 'task__client')
+
+    return render(request, 'core/notification_list.html', {
+        'notifications': notifications,
+    })
+
+
+@login_required
+def notification_mark_read(request, notification_id):
+    """Пометить уведомление как прочитанное. Только POST.
+
+    После отметки редиректит обратно на список уведомлений.
+    """
+    if request.method != 'POST':
+        return redirect('core:notification_list')
+
+    notification = get_object_or_404(
+        Notification, id=notification_id, user=request.user
+    )
+    notification.is_read = True
+    notification.save()
+    messages.success(request, 'Уведомление отмечено как прочитанное.')
+    return redirect('core:notification_list')

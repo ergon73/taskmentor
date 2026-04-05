@@ -39,4 +39,8 @@ urlpatterns = [
     # === Самочувствие ===
     path('clients/<int:client_id>/mood/add/', views.mood_create, name='mood_create'),
     path('clients/<int:client_id>/mood/', views.mood_history, name='mood_history'),
+
+    # === Уведомления ===
+    path('notifications/', views.notification_list, name='notification_list'),
+    path('notifications/<int:notification_id>/read/', views.notification_mark_read, name='notification_mark_read'),
 ]

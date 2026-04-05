@@ -44,9 +44,8 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        {# Этап 4: заменить href на {% url 'core:notification_list' %} #}
                         <a class="nav-link {% if '/notifications/' in request.path %}active{% endif %}"
-                           href="/notifications/">
+                           href="{% url 'core:notification_list' %}">
                             &#x1F514; Уведомления
                             {% if unread_notifications_count > 0 %}
                             <span class="badge bg-danger notification-badge">{{ unread_notifications_count }}</span>
