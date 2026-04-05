@@ -12,7 +12,7 @@
 Предполагаемый запуск: ежедневно через cron или планировщик задач.
 """
 
-from datetime import timedelta
+from datetime import datetime, time, timedelta
 
 from django.core.management.base import BaseCommand
 from django.utils import timezone
@@ -24,8 +24,19 @@ class Command(BaseCommand):
     help = 'Создаёт уведомления о задачах с истекающим или просроченным дедлайном'
 
     def handle(self, *args, **options):
-        today = timezone.now().date()
+        # timezone.localdate() → дата в TIME_ZONE (Europe/Moscow), не UTC.
+        # Важно: при USE_TZ=True timezone.now().date() даёт UTC-дату,
+        # которая может отличаться от московской в ночные часы.
+        today = timezone.localdate()
         tomorrow = today + timedelta(days=1)
+
+        # Явные границы «сегодня» как datetime-диапазон.
+        # make_aware() без аргументов использует TIME_ZONE из settings.
+        # Это позволяет избежать __date lookup на DateTimeField при USE_TZ=True:
+        # SQLite вызывает django_datetime_cast_date() с zoneinfo-конвертацией,
+        # которая на Windows падает молча без пакета tzdata → always False.
+        today_start = timezone.make_aware(datetime.combine(today, time.min))
+        tomorrow_start = timezone.make_aware(datetime.combine(tomorrow, time.min))
 
         # Активные задачи с дедлайном сегодня или раньше (просрочены),
         # либо с дедлайном завтра
@@ -37,10 +48,12 @@ class Command(BaseCommand):
         created_count = 0
 
         for task in tasks:
-            # Пропускаем, если уведомление за сегодня уже создано
+            # Пропускаем, если уведомление за сегодня уже создано.
+            # Используем __gte/__lt вместо __date — надёжно на SQLite+Windows.
             already_notified = Notification.objects.filter(
                 task=task,
-                created_at__date=today,
+                created_at__gte=today_start,
+                created_at__lt=tomorrow_start,
             ).exists()
 
             if already_notified:
