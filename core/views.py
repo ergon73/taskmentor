@@ -6,17 +6,21 @@
 
 Этап 1: index, register, user_login, user_logout, dashboard (заглушка).
 Этап 2: client_list/detail/create/update/delete, task_list/create/update/delete/change_status.
-Этапы 3–4: mood_*, notification_* добавляются позже.
+Этап 3: mood_create, mood_history, полный dashboard с Chart.js.
+Этап 4: notification_list, notification_mark_read.
 """
+
+from datetime import timedelta
 
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from django.db.models import Q
+from django.db.models import Q, Avg
+from django.utils import timezone
 
-from .forms import RegisterForm, ClientForm, TaskForm
-from .models import Client, Task
+from .forms import RegisterForm, ClientForm, TaskForm, MoodForm
+from .models import Client, Task, MoodEntry
 
 
 # ===========================================================================
@@ -93,12 +97,60 @@ def user_logout(request):
 
 @login_required
 def dashboard(request):
-    """Дашборд — главная страница приложения после входа.
+    """Дашборд — метрики, графики Chart.js, топ-5 задач."""
+    user = request.user
+    today = timezone.now().date()
 
-    Этап 1: заглушка.
-    Этап 3: полная реализация с метриками и графиками Chart.js.
-    """
-    return render(request, 'core/dashboard.html')
+    # --- Метрики ---
+    clients_count = Client.objects.filter(owner=user).count()
+
+    active_tasks_qs = Task.objects.filter(
+        client__owner=user
+    ).exclude(status='done').select_related('client')
+    active_count = active_tasks_qs.count()
+    overdue_count = active_tasks_qs.filter(due_date__lt=today).count()
+
+    # Среднее настроение за последние 7 дней
+    week_ago = today - timedelta(days=7)
+    avg_mood_result = MoodEntry.objects.filter(
+        client__owner=user, date__gte=week_ago
+    ).aggregate(avg=Avg('score'))['avg']
+    avg_mood_display = f'{round(avg_mood_result, 1)}' if avg_mood_result else '—'
+
+    # --- Данные для Doughnut-графика (задачи по статусам) ---
+    all_tasks_qs = Task.objects.filter(client__owner=user)
+    status_data = {
+        'new': all_tasks_qs.filter(status='new').count(),
+        'in_progress': all_tasks_qs.filter(status='in_progress').count(),
+        'done': all_tasks_qs.filter(status='done').count(),
+    }
+
+    # --- Данные для Line-графика (среднее настроение за 30 дней) ---
+    thirty_days_ago = today - timedelta(days=30)
+    mood_qs = list(
+        MoodEntry.objects
+        .filter(client__owner=user, date__gte=thirty_days_ago)
+        .values('date')
+        .annotate(avg_score=Avg('score'))
+        .order_by('date')
+    )
+    mood_labels = [entry['date'].isoformat() for entry in mood_qs]
+    mood_values = [round(float(entry['avg_score']), 1) for entry in mood_qs]
+
+    # --- Топ-5 задач по умной сортировке ---
+    top_tasks = sorted(active_tasks_qs, key=lambda t: t.score, reverse=True)[:5]
+
+    return render(request, 'core/dashboard.html', {
+        'clients_count': clients_count,
+        'active_count': active_count,
+        'overdue_count': overdue_count,
+        'avg_mood_display': avg_mood_display,
+        # raw dict/list — json_script в шаблоне выполнит сериализацию безопасно
+        'status_data': status_data,
+        'mood_labels': mood_labels,
+        'mood_values': mood_values,
+        'top_tasks': top_tasks,
+    })
 
 
 # ===========================================================================
@@ -122,26 +174,37 @@ def client_list(request):
 
 @login_required
 def client_detail(request, client_id):
-    """Карточка клиента: контактная информация, задачи, история настроения."""
+    """Карточка клиента: информация, задачи, история настроения и спарклайн."""
     client = get_object_or_404(Client, id=client_id, owner=request.user)
 
-    # Задачи клиента: активные сортируются по score, завершённые — в конец
-    client_tasks = client.tasks.all().select_related('client')
+    # Задачи клиента: активные по score, завершённые в конце
+    client_tasks = list(client.tasks.all())
     active_tasks = sorted(
         [t for t in client_tasks if t.status != 'done'],
         key=lambda t: t.score,
         reverse=True
     )
-    done_tasks = list(client_tasks.filter(status='done'))
+    done_tasks = [t for t in client_tasks if t.status == 'done']
 
-    # Этап 3: здесь будут реальные mood_entries (последние 10 записей)
-    mood_entries = []
+    # Последние 10 записей самочувствия (для таблицы)
+    mood_entries = MoodEntry.objects.filter(client=client)[:10]
+
+    # Данные для спарклайна (30 дней, упорядочены по дате возрастания)
+    thirty_days_ago = timezone.now().date() - timedelta(days=30)
+    sparkline_qs = list(
+        MoodEntry.objects.filter(client=client, date__gte=thirty_days_ago)
+        .order_by('date').values('date', 'score')
+    )
+    spark_labels = [e['date'].isoformat() for e in sparkline_qs]
+    spark_values = [e['score'] for e in sparkline_qs]
 
     return render(request, 'core/client_detail.html', {
         'client': client,
         'active_tasks': active_tasks,
         'done_tasks': done_tasks,
         'mood_entries': mood_entries,
+        'spark_labels': spark_labels,
+        'spark_values': spark_values,
     })
 
 
@@ -185,7 +248,7 @@ def client_update(request, client_id):
 
 @login_required
 def client_delete(request, client_id):
-    """Удаление клиента с подтверждением. Удаляет также все его задачи."""
+    """Удаление клиента с подтверждением. Каскадно удаляет задачи и записи настроения."""
     client = get_object_or_404(Client, id=client_id, owner=request.user)
 
     if request.method == 'POST':
@@ -205,10 +268,12 @@ def client_delete(request, client_id):
 def task_list(request):
     """Список всех задач пользователя с умной сортировкой.
 
-    Активные задачи: сортируются по score (убывание).
+    Активные: сортируются по score (убывание).
     Завершённые: в конце таблицы, без сортировки по score.
     """
-    all_tasks = Task.objects.filter(client__owner=request.user).select_related('client')
+    all_tasks = Task.objects.filter(
+        client__owner=request.user
+    ).select_related('client')
     active_tasks = sorted(
         [t for t in all_tasks if t.status != 'done'],
         key=lambda t: t.score,
@@ -226,7 +291,7 @@ def task_list(request):
 def task_create(request):
     """Создание новой задачи.
 
-    Статус принудительно устанавливается в 'new' независимо от формы.
+    Статус принудительно устанавливается в 'new' при создании.
     GET-параметр ?client=<id> позволяет предварительно выбрать клиента
     (используется при переходе из карточки клиента).
     """
@@ -316,3 +381,58 @@ def task_change_status(request, task_id):
     if referer:
         return redirect(referer)
     return redirect('core:task_list')
+
+
+# ===========================================================================
+# Самочувствие
+# ===========================================================================
+
+@login_required
+def mood_create(request, client_id):
+    """Добавление (или обновление) записи самочувствия клиента.
+
+    Ограничение «одна запись в день» реализовано через update_or_create:
+    если запись за эту дату уже есть — обновляется, иначе создаётся новая.
+    """
+    client = get_object_or_404(Client, id=client_id, owner=request.user)
+
+    if request.method == 'POST':
+        form = MoodForm(request.POST)
+        if form.is_valid():
+            entry_date = form.cleaned_data['date']
+            score = form.cleaned_data['score']
+            comment = form.cleaned_data['comment']
+
+            _, created = MoodEntry.objects.update_or_create(
+                client=client,
+                date=entry_date,
+                defaults={'score': score, 'comment': comment},
+            )
+
+            verb = 'добавлена' if created else 'обновлена'
+            messages.success(
+                request,
+                f'Запись самочувствия за {entry_date.strftime("%d.%m.%Y")} {verb}.'
+            )
+            return redirect('core:client_detail', client_id=client.id)
+        else:
+            messages.error(request, 'Пожалуйста, исправьте ошибки в форме.')
+    else:
+        form = MoodForm()
+
+    return render(request, 'core/mood_form.html', {
+        'form': form,
+        'client': client,
+    })
+
+
+@login_required
+def mood_history(request, client_id):
+    """Полная история самочувствия клиента (все записи, по убыванию даты)."""
+    client = get_object_or_404(Client, id=client_id, owner=request.user)
+    entries = MoodEntry.objects.filter(client=client)  # ordering = ['-date'] из Meta
+
+    return render(request, 'core/mood_history.html', {
+        'client': client,
+        'entries': entries,
+    })

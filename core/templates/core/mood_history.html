@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}История самочувствия — {{ client.name }} — TaskMentor{% endblock %}
+
+{% block content %}
+<div class="mb-3">
+    <a href="{% url 'core:client_detail' client.id %}"
+       class="text-muted text-decoration-none small">
+        &#x2190; Назад к {{ client.name }}
+    </a>
+</div>
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+        <h4 class="mb-0">История самочувствия</h4>
+        <p class="text-muted mb-0">{{ client.name }}</p>
+    </div>
+    <a href="{% url 'core:mood_create' client.id %}" class="btn btn-warning">
+        + Добавить запись
+    </a>
+</div>
+
+{% if entries %}
+<div class="table-responsive">
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>Дата</th>
+                <th>Оценка</th>
+                <th>Комментарий</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for entry in entries %}
+            <tr>
+                <td>{{ entry.date|date:"d.m.Y" }}</td>
+                <td class="mood-{{ entry.score }}">&#x2B50; {{ entry.score }}/5</td>
+                <td class="text-muted">{{ entry.comment|default:"—" }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+<div class="text-center py-5">
+    <p class="text-muted fs-5">Записей самочувствия пока нет.</p>
+    <a href="{% url 'core:mood_create' client.id %}" class="btn btn-warning">
+        + Добавить первую запись
+    </a>
+</div>
+{% endif %}
+{% endblock %}

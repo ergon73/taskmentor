@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block title %}Запись самочувствия — {{ client.name }} — TaskMentor{% endblock %}
+
+{% block content %}
+<div class="mb-3">
+    <a href="{% url 'core:client_detail' client.id %}"
+       class="text-muted text-decoration-none small">
+        &#x2190; Назад к {{ client.name }}
+    </a>
+</div>
+
+<h4 class="mb-1">&#x1F60A; Самочувствие</h4>
+<p class="text-muted mb-4">Клиент: <strong>{{ client.name }}</strong></p>
+
+<div class="card" style="max-width: 500px;">
+    <div class="card-body p-4">
+        <form method="post" novalidate>
+            {% csrf_token %}
+
+            <!-- Дата -->
+            <div class="mb-3">
+                <label class="form-label fw-semibold">
+                    {{ form.date.label }} <span class="text-danger">*</span>
+                </label>
+                {{ form.date }}
+                {% if form.date.errors %}
+                <div class="text-danger small mt-1">
+                    {% for e in form.date.errors %}{{ e }}{% endfor %}
+                </div>
+                {% endif %}
+                <div class="form-text text-muted">
+                    Можно указать вчерашнюю дату, если забыли внести запись.
+                </div>
+            </div>
+
+            <!-- Оценка -->
+            <div class="mb-3">
+                <label class="form-label fw-semibold">
+                    {{ form.score.label }} <span class="text-danger">*</span>
+                </label>
+                {{ form.score }}
+                {% if form.score.errors %}
+                <div class="text-danger small mt-1">
+                    {% for e in form.score.errors %}{{ e }}{% endfor %}
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Комментарий -->
+            <div class="mb-3">
+                <label class="form-label fw-semibold">{{ form.comment.label }}</label>
+                {{ form.comment }}
+            </div>
+
+            <div class="d-flex gap-2 mt-3">
+                <button type="submit" class="btn btn-warning">Сохранить</button>
+                <a href="{% url 'core:client_detail' client.id %}"
+                   class="btn btn-outline-secondary">Отмена</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="mt-3 text-muted small">
+    &#x2139;&#xFE0F; Если запись за эту дату уже существует — она будет обновлена.
+</div>
+{% endblock %}

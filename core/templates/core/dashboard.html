@@ -5,7 +5,198 @@
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h4 class="mb-0">&#x1F4CA; Дашборд</h4>
 </div>
-<div class="alert alert-info" role="alert">
-    &#x1F6A7; Дашборд в разработке. Метрики и графики появятся на Этапе&#xA0;3.
+
+<!-- === МЕТРИКИ (4 карточки) === -->
+<div class="row g-3 mb-4">
+    <div class="col-md-3 col-sm-6">
+        <div class="card dashboard-card">
+            <div class="card-body text-center">
+                <div class="metric-label">&#x1F465; Клиенты</div>
+                <div class="metric-value">{{ clients_count }}</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 col-sm-6">
+        <div class="card dashboard-card">
+            <div class="card-body text-center">
+                <div class="metric-label">&#x1F4CB; Активные задачи</div>
+                <div class="metric-value">{{ active_count }}</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 col-sm-6">
+        <div class="card dashboard-card">
+            <div class="card-body text-center">
+                <div class="metric-label">&#x26A0;&#xFE0F; Просроченные</div>
+                <div class="metric-value {% if overdue_count > 0 %}text-danger{% endif %}">
+                    {{ overdue_count }}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 col-sm-6">
+        <div class="card dashboard-card">
+            <div class="card-body text-center">
+                <div class="metric-label">&#x1F60A; Настроение (7 дн.)</div>
+                <div class="metric-value">{{ avg_mood_display }}</div>
+            </div>
+        </div>
+    </div>
 </div>
+
+<!-- === ГРАФИКИ (2 колонки) === -->
+<div class="row g-3 mb-4">
+    <!-- Doughnut — задачи по статусам -->
+    <div class="col-md-6">
+        <div class="card dashboard-card">
+            <div class="card-body">
+                <h6 class="mb-3">Задачи по статусам</h6>
+                <div style="max-height: 240px; display:flex; align-items:center; justify-content:center;">
+                    <canvas id="statusChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Line — настроение за 30 дней -->
+    <div class="col-md-6">
+        <div class="card dashboard-card">
+            <div class="card-body">
+                <h6 class="mb-3">Настроение клиентов (30 дней)</h6>
+                {% if mood_labels %}
+                <canvas id="moodChart" style="max-height: 220px;"></canvas>
+                {% else %}
+                <div class="text-center text-muted py-4"
+                     style="background:#F9FAFB; border-radius:8px; border:2px dashed #E5E7EB; min-height:180px;
+                            display:flex; align-items:center; justify-content:center;">
+                    Нет данных о настроении за последние 30 дней.<br>
+                    Добавьте первые записи через карточку клиента.
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- === ТОП-5 ЗАДАЧ === -->
+<div class="card dashboard-card">
+    <div class="card-body">
+        <h6 class="mb-3">&#x1F525; Топ-5 ближайших задач</h6>
+        {% if top_tasks %}
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th>Задача</th>
+                        <th>Клиент</th>
+                        <th>Дедлайн</th>
+                        <th>Приоритет</th>
+                        <th>Score</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for task in top_tasks %}
+                    <tr {% if task.is_overdue %}class="task-overdue"{% endif %}>
+                        <td>
+                            {{ task.title }}
+                            {% if task.is_overdue %}
+                            <span class="text-danger fw-bold small ms-1">Просрочено!</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="{% url 'core:client_detail' task.client.id %}">
+                                {{ task.client.name }}
+                            </a>
+                        </td>
+                        <td>{{ task.due_date|date:"d.m.Y" }}</td>
+                        <td>
+                            {% if task.priority == 'high' %}
+                            <span class="badge bg-danger">Высокий</span>
+                            {% elif task.priority == 'medium' %}
+                            <span class="badge bg-warning text-dark">Средний</span>
+                            {% else %}
+                            <span class="badge bg-secondary">Низкий</span>
+                            {% endif %}
+                        </td>
+                        <td><strong>{{ task.score }}</strong></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <p class="text-muted mb-0">Нет активных задач. <a href="{% url 'core:task_create' %}">Создать задачу</a>.</p>
+        {% endif %}
+    </div>
+</div>
+
+{# JSON-данные для Chart.js — безопасная передача через json_script (XSS-защита) #}
+{{ status_data|json_script:"status-data" }}
+{{ mood_labels|json_script:"mood-labels" }}
+{{ mood_values|json_script:"mood-values" }}
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<script>
+    // === Doughnut: задачи по статусам ===
+    const statusData = JSON.parse(document.getElementById('status-data').textContent);
+    const statusCtx = document.getElementById('statusChart').getContext('2d');
+    new Chart(statusCtx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Новые', 'В работе', 'Завершены'],
+            datasets: [{
+                data: [statusData.new, statusData.in_progress, statusData.done],
+                backgroundColor: ['#3B82F6', '#F59E0B', '#10B981'],
+                borderWidth: 2,
+                borderColor: '#fff',
+            }]
+        },
+        options: {
+            responsive: true,
+            cutout: '60%',
+            plugins: {
+                legend: { position: 'bottom' }
+            }
+        }
+    });
+
+    // === Line: динамика настроения за 30 дней ===
+    const moodCanvas = document.getElementById('moodChart');
+    if (moodCanvas) {
+        const moodLabels = JSON.parse(document.getElementById('mood-labels').textContent);
+        const moodValues = JSON.parse(document.getElementById('mood-values').textContent);
+        const moodCtx = moodCanvas.getContext('2d');
+        new Chart(moodCtx, {
+            type: 'line',
+            data: {
+                labels: moodLabels,
+                datasets: [{
+                    label: 'Среднее настроение',
+                    data: moodValues,
+                    borderColor: '#F97316',
+                    backgroundColor: 'rgba(249, 115, 22, 0.1)',
+                    tension: 0.3,
+                    fill: true,
+                    pointRadius: 4,
+                    pointBackgroundColor: '#F97316',
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        min: 1,
+                        max: 5,
+                        ticks: { stepSize: 1 }
+                    }
+                },
+                plugins: {
+                    legend: { display: false }
+                }
+            }
+        });
+    }
+</script>
 {% endblock %}

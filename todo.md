@@ -9,7 +9,7 @@
 
 ---
 
-## Статус: ЭТАП 2 — В ПРОЦЕССЕ
+## Статус: ЭТАП 3 — В ПРОЦЕССЕ
 
 ---
 
@@ -51,29 +51,30 @@
 
 ---
 
-## Этап 2: Клиенты и задачи (дни 3–5) ← ТЕКУЩИЙ
+## Этап 2: Клиенты и задачи ✅
 
-- [~] 🔴 `core/models.py` — модели `Client`, `Task` (точно по спецификации)
-- [ ] 🔴 `python manage.py makemigrations && migrate`
-- [ ] 🔴 `core/forms.py` — `ClientForm`, `TaskForm` (фильтрация клиентов по owner)
-- [ ] 🔴 `core/admin.py` — `ClientAdmin`, `TaskAdmin`
-- [ ] 🔴 Views: `client_list`, `client_detail`, `client_create`, `client_update`, `client_delete`
-- [ ] 🔴 Views: `task_list`, `task_create`, `task_update`, `task_delete`, `task_change_status`
-- [ ] 🔴 Шаблоны: `client_list.html`, `client_detail.html`, `client_form.html`, `client_confirm_delete.html`
-- [ ] 🔴 Шаблоны: `task_list.html`, `task_form.html`, `task_confirm_delete.html`
-- [ ] 🔴 Обновить `base.html` — рабочие URL-names в навигации
-- [ ] 🔴 Обновить `core/urls.py` — все маршруты клиентов и задач
-- [ ] 🔴 Management command: `create_demo_data` (3 клиента, 10 задач)
-- [ ] 🔴 `python manage.py check` — 0 ошибок
-- [ ] 🔴 Проверить импорты: `python -c "from core.models import Client, Task"`
-- [ ] 🟡 `git commit "этап 2: CRUD клиентов и задач, умная сортировка"`
-- [ ] 🟡 Показать пользователю → ждать ОК
+- [x] 🔴 `core/models.py` — Client, Task (score/is_overdue properties, точно по спецификации)
+- [x] 🔴 `python manage.py makemigrations && migrate` → core.0001_initial OK
+- [x] 🔴 `core/forms.py` — ClientForm, TaskForm (user= kwargs, фильтрация по owner)
+- [x] 🔴 `core/admin.py` — ClientAdmin, TaskAdmin
+- [x] 🔴 Views: client_list/detail/create/update/delete
+- [x] 🔴 Views: task_list/create/update/delete/change_status
+- [x] 🔴 Шаблоны: client_list/detail/form/confirm_delete
+- [x] 🔴 Шаблоны: task_list/form/confirm_delete
+- [x] 🔴 base.html — рабочие URL-names ({% url 'core:client_list' %} и др.)
+- [x] 🔴 core/urls.py — все маршруты клиентов и задач
+- [x] 🔴 create_demo_data (3 клиента, 10 задач, проверен score)
+- [x] 🔴 manage.py check → 0 ошибок
+- [x] 🔴 Импорты models/forms/views/admin → все OK
+- [x] 🔴 Score test: 130/80/10 → OK
+- [x] 🟡 git commit 74e5793
+- [x] 🟡 ОК получен → переход к Этапу 3
 
 ---
 
-## Этап 3: Самочувствие + дашборд (дни 6–8)
+## Этап 3: Самочувствие + дашборд (дни 6–8) ← ТЕКУЩИЙ
 
-- [ ] 🔴 `core/models.py` — модель `MoodEntry`
+- [~] 🔴 `core/models.py` — модель `MoodEntry`
 - [ ] 🔴 `python manage.py makemigrations && migrate`
 - [ ] 🔴 `core/forms.py` — `MoodForm`
 - [ ] 🔴 `core/admin.py` — `MoodEntryAdmin`

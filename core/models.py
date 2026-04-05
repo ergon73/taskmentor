@@ -9,7 +9,6 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
-from datetime import timedelta  # noqa: F401 — используется в management commands
 
 
 class Client(models.Model):
@@ -102,3 +101,26 @@ class Task(models.Model):
             bonus = 0     # > 7 дней
 
         return base + bonus
+
+
+class MoodEntry(models.Model):
+    """Запись самочувствия клиента (одна в день)."""
+
+    SCORE_CHOICES = [(i, str(i)) for i in range(1, 6)]
+
+    client = models.ForeignKey(
+        Client, on_delete=models.CASCADE, related_name='mood_entries',
+        verbose_name='Клиент'
+    )
+    date = models.DateField('Дата')
+    score = models.IntegerField('Оценка', choices=SCORE_CHOICES)
+    comment = models.TextField('Комментарий', max_length=500, blank=True, default='')
+
+    class Meta:
+        verbose_name = 'Запись самочувствия'
+        verbose_name_plural = 'Записи самочувствия'
+        unique_together = ('client', 'date')  # одна запись в день на клиента
+        ordering = ['-date']
+
+    def __str__(self):
+        return f'{self.client.name} — {self.date} — {self.score}/5'

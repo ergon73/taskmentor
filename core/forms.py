@@ -4,14 +4,16 @@
 RegisterForm — регистрация пользователя.
 ClientForm   — создание и редактирование клиента.
 TaskForm     — создание и редактирование задачи.
-MoodForm     — добавляется на Этапе 3.
+MoodForm     — запись самочувствия клиента.
 """
+
+import datetime
 
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 
-from .models import Client, Task
+from .models import Client, Task, MoodEntry
 
 
 class RegisterForm(UserCreationForm):
@@ -75,7 +77,7 @@ class ClientForm(forms.ModelForm):
 class TaskForm(forms.ModelForm):
     """Форма создания и редактирования задачи.
 
-    Требует передачи user= в конструктор, чтобы фильтровать список клиентов.
+    Требует передачи user= в конструктор для фильтрации списка клиентов.
     Пример: TaskForm(request.POST, user=request.user)
     """
 
@@ -116,3 +118,54 @@ class TaskForm(forms.ModelForm):
             self.fields['client'].queryset = Client.objects.filter(owner=user)
         else:
             self.fields['client'].queryset = Client.objects.none()
+
+
+class MoodForm(forms.ModelForm):
+    """Форма добавления записи самочувствия клиента.
+
+    Дефолтная дата — сегодня, но пользователь может изменить
+    (например, ввести вчерашнюю дату задним числом).
+    Логика «одна запись в день» реализована через update_or_create во view.
+    """
+
+    # Переопределяем score с читаемыми метками
+    score = forms.ChoiceField(
+        label='Оценка самочувствия',
+        choices=[
+            (1, '1 — Очень плохо'),
+            (2, '2 — Плохо'),
+            (3, '3 — Нормально'),
+            (4, '4 — Хорошо'),
+            (5, '5 — Отлично'),
+        ],
+        widget=forms.Select(attrs={'class': 'form-select'}),
+    )
+
+    class Meta:
+        model = MoodEntry
+        fields = ['date', 'score', 'comment']
+        labels = {
+            'date': 'Дата',
+            'comment': 'Комментарий (необязательно)',
+        }
+        widgets = {
+            'date': forms.DateInput(attrs={
+                'class': 'form-control',
+                'type': 'date',
+            }),
+            'comment': forms.Textarea(attrs={
+                'class': 'form-control',
+                'rows': 3,
+                'placeholder': 'Как прошёл день, что заметили...',
+            }),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Дефолтная дата — сегодня (только при создании, не при редактировании)
+        if not self.instance.pk:
+            self.initial.setdefault('date', datetime.date.today())
+
+    def clean_score(self):
+        """Приводим score к int (ChoiceField возвращает строку)."""
+        return int(self.cleaned_data['score'])

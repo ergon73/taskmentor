@@ -42,15 +42,27 @@
             </div>
         </div>
     </div>
-    <!-- Настроение (мини-график — Этап 3) -->
+
+    <!-- Спарклайн настроения за 30 дней -->
     <div class="col-md-6">
         <div class="card h-100">
             <div class="card-body">
-                <h6 class="mb-3">&#x1F60A; Настроение (30 дней)</h6>
-                <div class="text-center text-muted py-3"
-                     style="background:#F9FAFB; border-radius:8px; border:2px dashed #E5E7EB; min-height: 100px; display:flex; align-items:center; justify-content:center;">
-                    &#x1F4C8; График настроения появится на Этапе&#xA0;3
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <h6 class="mb-0">&#x1F60A; Настроение (30 дней)</h6>
+                    <a href="{% url 'core:mood_history' client.id %}"
+                       class="text-muted text-decoration-none small">История →</a>
                 </div>
+                {% if spark_labels %}
+                {{ spark_labels|json_script:"spark-labels" }}
+                {{ spark_values|json_script:"spark-values" }}
+                <canvas id="sparklineChart" style="max-height: 120px;"></canvas>
+                {% else %}
+                <div class="text-center text-muted py-3"
+                     style="background:#F9FAFB; border-radius:8px; border:2px dashed #E5E7EB;
+                            min-height: 90px; display:flex; align-items:center; justify-content:center;">
+                    Нет данных. Добавьте первую запись.
+                </div>
+                {% endif %}
             </div>
         </div>
     </div>
@@ -102,8 +114,22 @@
                     {% endif %}
                 </td>
                 <td>
-                    <a href="{% url 'core:task_update' task.id %}"
-                       class="btn btn-sm btn-outline-secondary" title="Редактировать">&#x270F;</a>
+                    <div class="d-flex gap-1">
+                        <form method="post"
+                              action="{% url 'core:task_change_status' task.id %}">
+                            {% csrf_token %}
+                            {% if task.status == 'new' %}
+                            <button type="submit" class="btn btn-sm btn-outline-primary"
+                                    title="Взять в работу">&#x25B6;</button>
+                            {% elif task.status == 'in_progress' %}
+                            <button type="submit" class="btn btn-sm btn-outline-success"
+                                    title="Завершить">&#x2705;</button>
+                            {% endif %}
+                        </form>
+                        <a href="{% url 'core:task_update' task.id %}"
+                           class="btn btn-sm btn-outline-secondary"
+                           title="Редактировать">&#x270F;</a>
+                    </div>
                 </td>
             </tr>
             {% endfor %}
@@ -111,9 +137,7 @@
             <tr class="table-light text-muted">
                 <td><s>{{ task.title }}</s></td>
                 <td>{{ task.due_date|date:"d.m.Y" }}</td>
-                <td>
-                    <span class="badge bg-secondary opacity-50">{{ task.get_priority_display }}</span>
-                </td>
+                <td><span class="badge bg-secondary opacity-50">{{ task.get_priority_display }}</span></td>
                 <td><span class="badge bg-success">Завершена</span></td>
                 <td></td>
             </tr>
@@ -124,15 +148,21 @@
 {% else %}
 <p class="text-muted mb-4">
     Задач у этого клиента пока нет.
-    <a href="{% url 'core:task_create' %}?client={{ client.id }}">Создать первую задачу</a>.
+    <a href="{% url 'core:task_create' %}?client={{ client.id }}">Создать первую</a>.
 </p>
 {% endif %}
 
-<!-- История настроения (Этап 3) -->
+<!-- История самочувствия -->
 <div class="d-flex justify-content-between align-items-center mb-2">
     <h5 class="mb-0">Самочувствие</h5>
-    {# Этап 3: заменить href на {% url 'core:mood_create' client.id %} и убрать disabled #}
-    <a href="#" class="btn btn-sm btn-warning disabled">+ Добавить запись</a>
+    <div>
+        {% if mood_entries %}
+        <a href="{% url 'core:mood_history' client.id %}"
+           class="btn btn-sm btn-outline-secondary me-1">Вся история</a>
+        {% endif %}
+        <a href="{% url 'core:mood_create' client.id %}"
+           class="btn btn-sm btn-warning">+ Добавить запись</a>
+    </div>
 </div>
 
 {% if mood_entries %}
@@ -145,13 +175,51 @@
         <tr>
             <td>{{ entry.date|date:"d.m.Y" }}</td>
             <td class="mood-{{ entry.score }}">&#x2B50; {{ entry.score }}/5</td>
-            <td>{{ entry.comment|default:"" }}</td>
+            <td class="text-muted small">{{ entry.comment|default:"" }}</td>
         </tr>
         {% endfor %}
     </tbody>
 </table>
 {% else %}
-<p class="text-muted">Записей самочувствия пока нет. Трекинг настроения появится на Этапе&#xA0;3.</p>
+<p class="text-muted">
+    Записей самочувствия пока нет.
+    <a href="{% url 'core:mood_create' client.id %}">Добавить первую</a>.
+</p>
 {% endif %}
 
+{% endblock %}
+
+{% block extra_js %}
+{% if spark_labels %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<script>
+    // Спарклайн настроения за 30 дней для карточки клиента
+    const sparkLabels = JSON.parse(document.getElementById('spark-labels').textContent);
+    const sparkValues = JSON.parse(document.getElementById('spark-values').textContent);
+    const sparkCtx = document.getElementById('sparklineChart').getContext('2d');
+    new Chart(sparkCtx, {
+        type: 'line',
+        data: {
+            labels: sparkLabels,
+            datasets: [{
+                data: sparkValues,
+                borderColor: '#F97316',
+                backgroundColor: 'rgba(249, 115, 22, 0.1)',
+                tension: 0.3,
+                fill: true,
+                pointRadius: 3,
+                pointBackgroundColor: '#F97316',
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: { min: 1, max: 5, ticks: { stepSize: 1 } },
+                x: { display: false }  // скрываем ось X для компактного спарклайна
+            },
+            plugins: { legend: { display: false } }
+        }
+    });
+</script>
+{% endif %}
 {% endblock %}

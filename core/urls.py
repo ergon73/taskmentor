@@ -3,7 +3,8 @@
 
 Этап 1: аутентификация + дашборд.
 Этап 2: клиенты, задачи.
-Этапы 3–4: настроение, уведомления — добавляются позже.
+Этап 3: самочувствие.
+Этап 4: уведомления — добавляются позже.
 """
 
 from django.urls import path
@@ -34,4 +35,8 @@ urlpatterns = [
     path('tasks/<int:task_id>/edit/', views.task_update, name='task_update'),
     path('tasks/<int:task_id>/delete/', views.task_delete, name='task_delete'),
     path('tasks/<int:task_id>/status/', views.task_change_status, name='task_change_status'),
+
+    # === Самочувствие ===
+    path('clients/<int:client_id>/mood/add/', views.mood_create, name='mood_create'),
+    path('clients/<int:client_id>/mood/', views.mood_history, name='mood_history'),
 ]
