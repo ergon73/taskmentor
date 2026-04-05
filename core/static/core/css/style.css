@@ -1,0 +1,116 @@
+/* TaskMentor — кастомная оранжевая тема */
+
+:root {
+    --tm-orange: #F97316;
+    --tm-orange-dark: #EA580C;
+    --tm-orange-light: #FFF7ED;
+    --tm-text: #1F2937;
+    --tm-text-muted: #6B7280;
+    --tm-bg: #F9FAFB;
+    --tm-white: #FFFFFF;
+
+    /* Статусы задач */
+    --tm-status-new: #3B82F6;
+    --tm-status-progress: #F59E0B;
+    --tm-status-done: #10B981;
+
+    /* Приоритеты */
+    --tm-priority-high: #EF4444;
+    --tm-priority-medium: #F59E0B;
+    --tm-priority-low: #6B7280;
+
+    /* Оценки настроения */
+    --tm-mood-1: #EF4444;
+    --tm-mood-2: #F97316;
+    --tm-mood-3: #F59E0B;
+    --tm-mood-4: #10B981;
+    --tm-mood-5: #059669;
+}
+
+body {
+    background-color: var(--tm-bg);
+    color: var(--tm-text);
+}
+
+/* === НАВИГАЦИЯ === */
+.navbar {
+    background-color: #1F2937 !important;
+}
+
+.navbar-brand {
+    font-weight: 700;
+    color: var(--tm-orange) !important;
+    font-size: 1.2rem;
+}
+
+.navbar-brand:hover {
+    color: var(--tm-orange-dark) !important;
+}
+
+/* === КНОПКИ === */
+.btn-warning {
+    background-color: var(--tm-orange);
+    border-color: var(--tm-orange);
+    color: #ffffff;
+    font-weight: 500;
+}
+
+.btn-warning:hover,
+.btn-warning:focus {
+    background-color: var(--tm-orange-dark);
+    border-color: var(--tm-orange-dark);
+    color: #ffffff;
+}
+
+/* === КАРТОЧКИ ДАШБОРДА === */
+.dashboard-card {
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    background-color: var(--tm-white);
+}
+
+.dashboard-card .card-body {
+    padding: 1.25rem;
+}
+
+.metric-value {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--tm-orange);
+    line-height: 1.2;
+}
+
+.metric-value.text-danger {
+    color: var(--tm-priority-high) !important;
+}
+
+.metric-label {
+    font-size: 0.875rem;
+    color: var(--tm-text-muted);
+    margin-bottom: 0.25rem;
+}
+
+/* === УВЕДОМЛЕНИЯ: БЕЙДЖ === */
+.notification-badge {
+    font-size: 0.7rem;
+    padding: 0.2em 0.5em;
+    vertical-align: middle;
+}
+
+/* === ТАБЛИЦЫ: ПРОСРОЧЕННЫЕ ЗАДАЧИ === */
+.task-overdue {
+    background-color: #FEE2E2 !important;
+}
+
+/* === НАСТРОЕНИЕ: ЦВЕТА ШКАЛЫ === */
+.mood-1 { color: var(--tm-mood-1); font-weight: 700; }
+.mood-2 { color: var(--tm-mood-2); font-weight: 700; }
+.mood-3 { color: var(--tm-mood-3); font-weight: 700; }
+.mood-4 { color: var(--tm-mood-4); font-weight: 700; }
+.mood-5 { color: var(--tm-mood-5); font-weight: 700; }
+
+/* === УВЕДОМЛЕНИЯ: НЕПРОЧИТАННЫЕ === */
+.notification-unread {
+    background-color: var(--tm-orange-light);
+}
