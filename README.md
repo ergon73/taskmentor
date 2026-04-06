@@ -2,6 +2,23 @@
 
 Веб-приложение для коучей, психологов и тренеров для управления клиентами, задачами и отслеживания самочувствия.
 
+## Скриншоты
+
+<table>
+  <tr>
+    <td align="center"><img src="docs/screenshots/01_login.png" width="420" alt="Вход"/><br/><sub>Страница входа</sub></td>
+    <td align="center"><img src="docs/screenshots/02_register.png" width="420" alt="Регистрация"/><br/><sub>Регистрация нового пользователя</sub></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="docs/screenshots/03_dashboard.png" width="420" alt="Дашборд"/><br/><sub>Дашборд — метрики и графики</sub></td>
+    <td align="center"><img src="docs/screenshots/04_clients.png" width="420" alt="Клиенты"/><br/><sub>Список клиентов</sub></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="docs/screenshots/05_tasks.png" width="420" alt="Задачи"/><br/><sub>Задачи с умной сортировкой по score</sub></td>
+    <td align="center"><img src="docs/screenshots/06_notifications.png" width="420" alt="Уведомления"/><br/><sub>Уведомления о дедлайнах</sub></td>
+  </tr>
+</table>
+
 ## Технологии
 
 - **Python 3.12** + **Django 4.2 LTS**
